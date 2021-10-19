@@ -6,7 +6,7 @@
 using namespace std;
 
 const float FPS = 6;
-const int SCREEN_W = 255;
+const int SCREEN_W = 240;
 const int SCREEN_H = 255;
 
 ALLEGRO_DISPLAY *display = NULL;
@@ -41,9 +41,9 @@ bool sair = false;
 
 short int started = 0;
 
-enum MYKEYS {KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT};
 int inicializa();
 void move(unsigned char &, unsigned char &, bool[]);
+void looking(bool [], char img[]);
 
 unsigned char ENEMIES_MAP[17][17] ={
 	"1111111111111111",
@@ -66,6 +66,7 @@ unsigned char ENEMIES_MAP[17][17] ={
 };
 
 int main(){
+	char img[] = "brocolis1.tga";
 	srand (time(NULL));
     if(!inicializa()) return -1;
 
@@ -88,6 +89,17 @@ int main(){
     
         if(redraw && al_is_event_queue_empty(event_queue)) {
             redraw = false;
+
+        	looking(movement_1, img);
+        	looking(movement_2, img);
+        	looking(movement_3, img);
+        	looking(movement_4, img);
+
+        	ghost1 = al_load_bitmap(img);
+        	ghost2 = al_load_bitmap(img);
+        	ghost3 = al_load_bitmap(img);
+        	ghost4 = al_load_bitmap(img);
+
 
             al_clear_to_color(al_map_rgb(0,0,0));
 
@@ -204,6 +216,13 @@ void move(unsigned char &posx, unsigned char &posy, bool possible_movs[]){
 	}
 }
 
+void looking(bool movement[], char img[]){
+	if(movement[0] == true) strcpy(img, "brocolis2.tga");
+	else if(movement[1] == true) strcpy(img, "brocolis1.tga");
+	else if(movement[2] == true) strcpy(img, "brocolis4.tga");
+	else if(movement[3] == true) strcpy(img, "brocolis3.tga");
+}
+
 int inicializa() {
 
     if(!al_init()){
@@ -234,7 +253,7 @@ int inicializa() {
         return 0;
     }
 
-    map_bmp = al_load_bitmap("mapateste.bmp");
+    map_bmp = al_load_bitmap("map.bmp");
     if(!map_bmp) {
         cout << "Falha ao carregar o mapa!" << endl;
         al_destroy_display(display);
@@ -242,10 +261,10 @@ int inicializa() {
     }
     al_draw_bitmap(map_bmp,0,0,0);
 
-    ghost1 = al_load_bitmap("fantasma.tga");
-    ghost2 = al_load_bitmap("ghost.tga");
-    ghost3 = al_load_bitmap("ghost.tga");
-    ghost4 = al_load_bitmap("ghost.tga");
+    ghost1 = al_load_bitmap("brocolis2.tga");
+    ghost2 = al_load_bitmap("brocolis2.tga");
+    ghost3 = al_load_bitmap("brocolis2.tga");
+    ghost4 = al_load_bitmap("brocolis2.tga");
     if(!ghost1 || !ghost2 || !ghost3 || !ghost4){
         cout << "Falha ao carregar o fantasma!" << endl;
         al_destroy_display(display);
