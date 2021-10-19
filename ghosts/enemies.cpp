@@ -44,6 +44,7 @@ short int started = 0;
 int inicializa();
 void move(unsigned char &, unsigned char &, bool[]);
 void looking(bool [], char img[]);
+bool possible(bool [], bool [], short int);
 
 unsigned char ENEMIES_MAP[17][17] ={
 	"1111111111111111",
@@ -126,7 +127,30 @@ int main(){
     return 0;
 }
 
-void move(unsigned char &posx, unsigned char &posy, bool possible_movs[]){
+bool possible(bool movs[], bool intention[], short int n){
+	short int oposite;
+
+	switch(n){
+		case 0:
+			oposite = 2;
+			break;
+		case 1:
+			oposite = 3;
+			break;
+		case 2: 
+			oposite = 0;
+			break;
+		case 3:
+			oposite = 1;
+			break;
+	}
+
+	if(movs[oposite] == intention[n] && movs[oposite] == true) return false;
+
+	return true;
+}
+
+void move(unsigned char &posx, unsigned char &posy, bool movs[]){
 	short int x, y;
 	x = posx/15;
 	y = posy/15;
@@ -134,67 +158,64 @@ void move(unsigned char &posx, unsigned char &posy, bool possible_movs[]){
 	cout << x << " " << y << ": " << ENEMIES_MAP[y][x] << endl;
 
 	if(ENEMIES_MAP[y][x] == '0' && started == 4){
-		if(possible_movs[0] == true) posy -= 15;
-		else if(possible_movs[1] == true) posx += 15;
-		else if(possible_movs[2] == true) posy += 15;
-		else if(possible_movs[3] == true) posx -= 15;
+		if(movs[0] == true) posy -= 15;
+		else if(movs[1] == true) posx += 15;
+		else if(movs[2] == true) posy += 15;
+		else if(movs[3] == true) posx -= 15;
 	}
 
 	else{
+		bool possible_movs[4] = {false, false, false, false};
 		unsigned char randChoice;
-		possible_movs[0] = false;
-		possible_movs[1] = false;
-		possible_movs[2] = false;
-		possible_movs[3] = false;
 
 		if(ENEMIES_MAP[y][x] == '2'){
-			if(ENEMIES_MAP[y-1][x] == '0' || ENEMIES_MAP[y-1][x] == '2')
-				possible_movs[0] = true;
+				if(ENEMIES_MAP[y-1][x] == '0' || ENEMIES_MAP[y-1][x] == '2')
+					possible_movs[0] = true;
 
-			if(ENEMIES_MAP[y][x+1] == '0' || ENEMIES_MAP[y][x+1] == '2')
-				possible_movs[1] = true;
+				if(ENEMIES_MAP[y][x+1] == '0' || ENEMIES_MAP[y][x+1] == '2')
+					possible_movs[1] = true;
 
-			if(ENEMIES_MAP[y+1][x] == '0' || ENEMIES_MAP[y+1][x] == '2')
-				possible_movs[2] = true;
+				if(ENEMIES_MAP[y+1][x] == '0' || ENEMIES_MAP[y+1][x] == '2')
+					possible_movs[2] = true;
 
-			if(ENEMIES_MAP[y][x-1] == '0' || ENEMIES_MAP[y][x-1] == '2')
-				possible_movs[3] = true;
+				if(ENEMIES_MAP[y][x-1] == '0' || ENEMIES_MAP[y][x-1] == '2')
+					possible_movs[3] = true;
 
 
-		do{
-			randChoice = (unsigned char)rand()%4;
-		}while(possible_movs[(int)randChoice] == false);
+			do{
+				randChoice = (unsigned char)rand()%4;
+			}while(possible_movs[(int)randChoice] == false || possible(movs, possible_movs, (short int)randChoice) == false);
 
-		switch(randChoice){
-			case 0:
-				posy -= 15;
-				possible_movs[0] = true;
-				possible_movs[1] = false;
-				possible_movs[2] = false;
-				possible_movs[3] = false;				
-				break;
-			case 1:
-				posx += 15;
-				possible_movs[0] = false;
-				possible_movs[1] = true;
-				possible_movs[2] = false;
-				possible_movs[3] = false;
-				break;
-			case 2:
-				posy += 15;
-				possible_movs[0] = false;
-				possible_movs[1] = false;
-				possible_movs[2] = true;
-				possible_movs[3] = false;
-				break;
-			case 3:
-				posx -= 15;
-				possible_movs[0] = false;
-				possible_movs[1] = false;
-				possible_movs[2] = false;
-				possible_movs[3] = true;
-				break;
-			}	
+			switch(randChoice){
+				case 0:
+					posy -= 15;
+					movs[0] = true;
+					movs[1] = false;
+					movs[2] = false;
+					movs[3] = false;				
+					break;
+				case 1:
+					posx += 15;
+					movs[0] = false;
+					movs[1] = true;
+					movs[2] = false;
+					movs[3] = false;
+					break;
+				case 2:
+					posy += 15;
+					movs[0] = false;
+					movs[1] = false;
+					movs[2] = true;
+					movs[3] = false;
+					break;
+				case 3:
+					posx -= 15;
+					movs[0] = false;
+					movs[1] = false;
+					movs[2] = false;
+					movs[3] = true;
+					break;
+				}	
 		}
 
 		else if (ENEMIES_MAP[y][x] == '3'){
@@ -293,4 +314,3 @@ int inicializa() {
 
     return 1;
 }
-
