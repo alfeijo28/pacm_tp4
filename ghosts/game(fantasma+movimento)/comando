@@ -1,1 +1,0 @@
-g++ testeghosts.cpp ghosts.cpp -lallegro -lallegro_image -lallegro_audio -lallegro_acodec -o teste
